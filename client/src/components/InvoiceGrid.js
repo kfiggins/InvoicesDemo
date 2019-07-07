@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -10,13 +10,31 @@ const Wrapper = styled.div`
 `;
 
 function InvoiceGrid({ invoices }) {
+  const [selectedInvoicesOrders, setSelectedInvoicesOrders] = useState({});
+  const handleCheckboxChange = e => {
+    setSelectedInvoicesOrders({
+      ...selectedInvoicesOrders,
+      [e.target.name]: e.target.checked
+    });
+    console.log("checkedItems: ", selectedInvoicesOrders);
+  };
+
+  const selectAllCheckboxes = e => {
+    const invoiceOrders = invoices.map(inv => inv.order);
+    let newselectedInvoiceOrders = {};
+    invoiceOrders.forEach(o => {
+      newselectedInvoiceOrders[o] = e.target.checked;
+    });
+    setSelectedInvoicesOrders(newselectedInvoiceOrders);
+  };
+
   return (
     <Wrapper>
       <table>
         <thead>
           <tr>
             <th>
-              <input type="checkbox" />
+              <input type="checkbox" onChange={selectAllCheckboxes} />
             </th>
             <th>Order</th>
             <th>Customer</th>
@@ -29,7 +47,12 @@ function InvoiceGrid({ invoices }) {
           {invoices.map((invoice, index) => (
             <tr key={index}>
               <td>
-                <input type="checkbox" checked={invoice.isSelected} />
+                <input
+                  type="checkbox"
+                  name={invoice.order}
+                  checked={selectedInvoicesOrders[invoice.order]}
+                  onChange={e => handleCheckboxChange(e)}
+                />
               </td>
               <td>{invoice.order}</td>
               <td>{invoice.customerName}</td>

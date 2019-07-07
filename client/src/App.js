@@ -13,7 +13,7 @@ const Wrapper = styled.div`
 
 //Initial State
 const initalState = {
-  currentStatusFilterId : 0,
+  currentStatusFilterId: 0,
   invoices: [
     {
       isSelected: false,
@@ -28,7 +28,7 @@ const initalState = {
     },
     {
       isSelected: true,
-      order: 1234,
+      order: 1235,
       customerId: 2,
       customerName: "Oil Co.",
       carrierId: 2,
@@ -39,7 +39,7 @@ const initalState = {
     },
     {
       isSelected: false,
-      order: 1234,
+      order: 1236,
       customerId: 3,
       customerName: "Frak Co.",
       carrierId: 3,
@@ -50,7 +50,7 @@ const initalState = {
     },
     {
       isSelected: false,
-      order: 1234,
+      order: 1237,
       customerId: 4,
       customerName: "Gas Co.",
       carrierId: 4,
