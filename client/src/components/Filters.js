@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
+import { connect } from "react-redux";
+
+import { filterOnStatus } from "../invoiceDuck";
 
 const Wrapper = styled.div`
   padding: 0.5rem;
@@ -7,21 +10,34 @@ const Wrapper = styled.div`
   display: flex;
 `;
 
-export default function Filters() {
+const Filters = ({ setStatusFilter }) => {
+  const [status, setStatus] = useState(0);
+  function handleStatusFilterClick() {
+    setStatusFilter(parseInt(status));
+  }
+
   return (
     <Wrapper>
-      <div>Filters: None</div>
       <div>
-        <select>
-          <option value="default" />
-          <option value="new">New</option>
-          <option value="pending">Pending</option>
-          <option value="billed">Billed</option>
+        <select value={status} onChange={e => setStatus(e.target.value)}>
+          <option value="0" />
+          <option value="1">New</option>
+          <option value="2">Pending</option>
+          <option value="3">Billed</option>
         </select>
       </div>
       <div>
-        <button>Apply Filter</button>
+        <button onClick={handleStatusFilterClick}>Apply Filter</button>
       </div>
     </Wrapper>
   );
-}
+};
+
+const mapDispatchToProps = dispatch => ({
+  setStatusFilter: statusId => dispatch(filterOnStatus(statusId))
+});
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(Filters);

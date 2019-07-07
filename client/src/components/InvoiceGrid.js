@@ -48,6 +48,10 @@ InvoiceGrid.propTypes = {
   invoices: PropTypes.array
 };
 
-const mapStateToProps = state => ({ invoices: state.invoices });
+const mapStateToProps = state => ({
+  invoices: state.currentStatusFilterId
+    ? state.invoices.filter(inv => inv.statusId === state.currentStatusFilterId)
+    : state.invoices
+});
 
 export default connect(mapStateToProps)(InvoiceGrid);

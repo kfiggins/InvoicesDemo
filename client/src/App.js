@@ -13,6 +13,7 @@ const Wrapper = styled.div`
 
 //Initial State
 const initalState = {
+  currentStatusFilterId : 0,
   invoices: [
     {
       isSelected: false,
