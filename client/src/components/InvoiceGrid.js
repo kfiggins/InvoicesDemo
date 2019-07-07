@@ -10,7 +10,15 @@ const Wrapper = styled.div`
 `;
 
 function InvoiceGrid({ invoices }) {
-  const [selectedInvoicesOrders, setSelectedInvoicesOrders] = useState({});
+  // TODO: Figure out a better way to initiate state
+  const invoiceOrders = invoices.map(inv => inv.order);
+  let newselectedInvoiceOrders = {};
+  invoiceOrders.forEach(o => {
+    newselectedInvoiceOrders[o] = false;
+  });
+  const [selectedInvoicesOrders, setSelectedInvoicesOrders] = useState(
+    newselectedInvoiceOrders
+  );
   const handleCheckboxChange = e => {
     setSelectedInvoicesOrders({
       ...selectedInvoicesOrders,
@@ -20,6 +28,7 @@ function InvoiceGrid({ invoices }) {
   };
 
   const selectAllCheckboxes = e => {
+    // TODO: is this the best way to select all checkboxes?
     const invoiceOrders = invoices.map(inv => inv.order);
     let newselectedInvoiceOrders = {};
     invoiceOrders.forEach(o => {
