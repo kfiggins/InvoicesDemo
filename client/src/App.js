@@ -1,14 +1,21 @@
 import React from "react";
 import styled from "styled-components";
 import { Provider } from "react-redux";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import configureStore from "./configureStore";
 
 import Filters from "./components/Filters";
 import InvoiceGrid from "./components/InvoiceGrid";
 
+// Set up toast
+toast.configure();
+
 const Wrapper = styled.div`
   padding: 2rem;
+  display: flex;
+  justify-content: center;
 `;
 
 //Initial State
@@ -68,8 +75,10 @@ function App() {
   return (
     <Provider store={store}>
       <Wrapper>
-        <Filters />
-        <InvoiceGrid />
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Filters />
+          <InvoiceGrid />
+        </div>
       </Wrapper>
     </Provider>
   );

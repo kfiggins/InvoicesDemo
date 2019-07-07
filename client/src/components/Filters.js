@@ -6,7 +6,7 @@ import { filterOnStatus } from "../invoiceDuck";
 
 const Wrapper = styled.div`
   padding: 0.5rem;
-  justify-content: center;
+  justify-content: space-between;
   display: flex;
 `;
 

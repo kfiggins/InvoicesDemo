@@ -3,13 +3,16 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
+import { submitInvoices } from "../invoiceDuck";
+import { toast } from "react-toastify";
+
 const Wrapper = styled.div`
-  padding: 2rem;
-  justify-content: center;
-  display: flex;
+  /* padding: 2rem; */
+  /* justify-content: center; */
+  /* display: flex; */
 `;
 
-function InvoiceGrid({ invoices }) {
+function InvoiceGrid({ invoices, submitInvoicesByOrders }) {
   // TODO: Figure out a better way to initiate state
   const invoiceOrders = invoices.map(inv => inv.order);
   let newselectedInvoiceOrders = {};
@@ -37,8 +40,19 @@ function InvoiceGrid({ invoices }) {
     setSelectedInvoicesOrders(newselectedInvoiceOrders);
   };
 
+  const handleSubmitInvoices = () => {
+    const orders = Object.keys(selectedInvoicesOrders)
+      .filter(x => selectedInvoicesOrders[x] === true)
+      .map(x => parseInt(x));
+    submitInvoicesByOrders(orders);
+    toast.success("Invoice(s) have been submitted!");
+  };
+
   return (
     <Wrapper>
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <button onClick={handleSubmitInvoices}>Submit Invoices</button>
+      </div>
       <table>
         <thead>
           <tr>
@@ -86,4 +100,11 @@ const mapStateToProps = state => ({
     : state.invoices
 });
 
-export default connect(mapStateToProps)(InvoiceGrid);
+const mapDispatchToProps = dispatch => ({
+  submitInvoicesByOrders: orders => dispatch(submitInvoices(orders))
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(InvoiceGrid);
