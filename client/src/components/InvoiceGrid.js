@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 
 import { submitInvoices } from "../invoiceDuck";
 import { toast } from "react-toastify";
+import { getFilteredInvoices } from "../selectors/selectors";
 
 const Wrapper = styled.div`
   /* padding: 2rem; */
@@ -95,9 +96,7 @@ InvoiceGrid.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  invoices: state.currentStatusFilterId
-    ? state.invoices.filter(inv => inv.statusId === state.currentStatusFilterId)
-    : state.invoices
+  invoices: getFilteredInvoices(state)
 });
 
 const mapDispatchToProps = dispatch => ({
