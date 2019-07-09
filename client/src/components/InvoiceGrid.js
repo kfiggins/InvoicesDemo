@@ -3,6 +3,17 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
+// Material UI
+import Button from "@material-ui/core/Button";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import Paper from "@material-ui/core/Paper";
+import Checkbox from "@material-ui/core/Checkbox";
+import Toolbar from "@material-ui/core/Toolbar";
+
 import { submitInvoices } from "../invoiceDuck";
 import { toast } from "react-toastify";
 import { getFilteredInvoices } from "../selectors/selectors";
@@ -11,6 +22,13 @@ const Wrapper = styled.div`
   /* padding: 2rem; */
   /* justify-content: center; */
   /* display: flex; */
+`;
+
+const ToolBarWrapper = styled.div`
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  width: 100%;
 `;
 
 function InvoiceGrid({ invoices, submitInvoicesByOrders }) {
@@ -49,44 +67,58 @@ function InvoiceGrid({ invoices, submitInvoicesByOrders }) {
     toast.success("Invoice(s) have been submitted!");
   };
 
+  const getNumberOfInvoicesSelected = () => {
+    //TODO: Once a invoice is submitted. It still thinks it is selected.
+    return Object.values(selectedInvoicesOrders).filter(x => x === true).length;
+  };
+
   return (
     <Wrapper>
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
-        <button onClick={handleSubmitInvoices}>Submit Invoices</button>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>
-              <input type="checkbox" onChange={selectAllCheckboxes} />
-            </th>
-            <th>Order</th>
-            <th>Customer</th>
-            <th>Carrier</th>
-            <th>Total</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {invoices.map((invoice, index) => (
-            <tr key={index}>
-              <td>
-                <input
-                  type="checkbox"
-                  name={invoice.order}
-                  checked={selectedInvoicesOrders[invoice.order]}
-                  onChange={e => handleCheckboxChange(e)}
-                />
-              </td>
-              <td>{invoice.order}</td>
-              <td>{invoice.customerName}</td>
-              <td>{invoice.carrierName}</td>
-              <td>{invoice.total}</td>
-              <td>{invoice.statusName}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Paper>
+        <Toolbar>
+          <ToolBarWrapper>
+            <div>{getNumberOfInvoicesSelected()} Orders Selected</div>{" "}
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <Button variant="outlined" color="primary" onClick={handleSubmitInvoices}>
+                Submit Invoices
+              </Button>
+            </div>
+          </ToolBarWrapper>
+        </Toolbar>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                <Checkbox onChange={selectAllCheckboxes} color="primary" />
+              </TableCell>
+              <TableCell>ORDER</TableCell>
+              <TableCell>CUSTOMER</TableCell>
+              <TableCell>CARRIER</TableCell>
+              <TableCell>TOTAL</TableCell>
+              <TableCell>STATUS</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {invoices.map(inv => (
+              <TableRow key={inv.order}>
+                <TableCell component="th" scope="row">
+                  <Checkbox
+                    name={inv.order}
+                    checked={selectedInvoicesOrders[inv.order]}
+                    onChange={e => handleCheckboxChange(e)}
+                    color="primary"
+                  />
+                </TableCell>
+                <TableCell>#{inv.order}</TableCell>
+                <TableCell>{inv.customerName}</TableCell>
+                <TableCell>{inv.carrierName}</TableCell>
+                <TableCell>{inv.total}</TableCell>
+                <TableCell>{inv.statusName}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Paper>
     </Wrapper>
   );
 }
