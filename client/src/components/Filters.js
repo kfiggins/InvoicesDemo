@@ -18,7 +18,8 @@ const Wrapper = styled.div`
   margin-bottom: 0.5rem;
   justify-content: space-between;
   display: flex;
-  border: 1px #7a7a7a solid;
+  border: 1px rgba(255, 255, 255, 0.23) solid;
+  border-radius: 7px;
 `;
 
 const ApplyFilterWrapper = styled.div`

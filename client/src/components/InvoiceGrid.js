@@ -3,6 +3,8 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
+import Status from "./Status";
+
 // Material UI
 import Button from "@material-ui/core/Button";
 import Table from "@material-ui/core/Table";
@@ -19,9 +21,17 @@ import { toast } from "react-toastify";
 import { getFilteredInvoices } from "../selectors/selectors";
 
 const Wrapper = styled.div`
-  /* padding: 2rem; */
-  /* justify-content: center; */
-  /* display: flex; */
+  border: 1px rgba(255, 255, 255, 0.23) solid;
+  border-radius: 7px;
+`;
+
+const StatusWrapper = styled.div`
+  border: #2b7ec6 1px solid;
+  border-radius: 15px;
+  padding: 5px 30px;
+  color: #2b7ec6;
+  width: 50px;
+  text-align: center;
 `;
 
 const ToolBarWrapper = styled.div`
@@ -49,12 +59,12 @@ function InvoiceGrid({ invoices, submitInvoicesByOrders }) {
     console.log("checkedItems: ", selectedInvoicesOrders);
   };
 
-  const selectAllCheckboxes = e => {
+  const selectAllCheckboxes = checked => {
     // TODO: is this the best way to select all checkboxes?
     const invoiceOrders = invoices.map(inv => inv.order);
     let newselectedInvoiceOrders = {};
     invoiceOrders.forEach(o => {
-      newselectedInvoiceOrders[o] = e.target.checked;
+      newselectedInvoiceOrders[o] = checked;
     });
     setSelectedInvoicesOrders(newselectedInvoiceOrders);
   };
@@ -64,7 +74,8 @@ function InvoiceGrid({ invoices, submitInvoicesByOrders }) {
       .filter(x => selectedInvoicesOrders[x] === true)
       .map(x => parseInt(x));
     submitInvoicesByOrders(orders);
-    toast.success("Invoice(s) have been submitted!");
+    selectAllCheckboxes(false);
+    toast.info("Invoice(s) have been submitted!");
   };
 
   const getNumberOfInvoicesSelected = () => {
@@ -89,7 +100,11 @@ function InvoiceGrid({ invoices, submitInvoicesByOrders }) {
           <TableHead>
             <TableRow>
               <TableCell>
-                <Checkbox onChange={selectAllCheckboxes} color="primary" />
+                <Checkbox
+                  onChange={e => selectAllCheckboxes(e.target.checked)}
+                  color="primary"
+                />{" "}
+                SELECT ALL
               </TableCell>
               <TableCell>ORDER</TableCell>
               <TableCell>CUSTOMER</TableCell>
@@ -113,7 +128,9 @@ function InvoiceGrid({ invoices, submitInvoicesByOrders }) {
                 <TableCell>{inv.customerName}</TableCell>
                 <TableCell>{inv.carrierName}</TableCell>
                 <TableCell>{inv.total}</TableCell>
-                <TableCell>{inv.statusName}</TableCell>
+                <TableCell>
+                  <Status invoice={inv} />
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
