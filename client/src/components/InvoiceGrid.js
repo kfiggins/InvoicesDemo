@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -16,9 +16,14 @@ import Paper from "@material-ui/core/Paper";
 import Checkbox from "@material-ui/core/Checkbox";
 import Toolbar from "@material-ui/core/Toolbar";
 
-import { submitInvoices, loadInvoices } from "../invoiceDuck";
+import {
+  submitInvoices,
+  loadInvoices,
+  selectInvoice,
+  selectAllInvoices
+} from "../invoiceDuck";
 import { toast } from "react-toastify";
-import { getFilteredInvoices } from "../selectors/selectors";
+import { getFilteredInvoices, getNumberOfSelectedInvoices } from "../selectors/selectors";
 
 const Wrapper = styled.div`
   border: 1px rgba(255, 255, 255, 0.23) solid;
@@ -37,18 +42,14 @@ const TableWrapper = styled.div`
   height: calc(100vh - 250px);
 `;
 
-function InvoiceGrid({ invoices, submitInvoicesByOrders, getInvoices }) {
-  // TODO: Figure out a better way to initiate state
-  const invoiceOrders = invoices.map(inv => inv.order);
-  let newselectedInvoiceOrders = {};
-  invoiceOrders.forEach(o => {
-    newselectedInvoiceOrders[o] = false;
-  });
-
-  const [selectedInvoicesOrders, setSelectedInvoicesOrders] = useState(
-    newselectedInvoiceOrders
-  );
-
+function InvoiceGrid({
+  invoices,
+  submitInvoicesByOrders,
+  getInvoices,
+  handleCheckboxSelect,
+  handleCheckboxSelectAll,
+  totalInvoicesSelected
+}) {
   useEffect(() => {
     async function fetchData() {
       const result = await fetch("/getInvoices");
@@ -58,44 +59,33 @@ function InvoiceGrid({ invoices, submitInvoicesByOrders, getInvoices }) {
     fetchData();
   }, [getInvoices]);
 
-  const handleCheckboxChange = e => {
-    setSelectedInvoicesOrders({
-      ...selectedInvoicesOrders,
-      [e.target.name]: e.target.checked
-    });
-    console.log("checkedItems: ", selectedInvoicesOrders);
+  const handleCheckboxChange = invoice => {
+    handleCheckboxSelect(invoice);
   };
 
   const selectAllCheckboxes = checked => {
-    // TODO: is this the best way to select all checkboxes?
-    const invoiceOrders = invoices.map(inv => inv.order);
-    let newselectedInvoiceOrders = {};
-    invoiceOrders.forEach(o => {
-      newselectedInvoiceOrders[o] = checked;
-    });
-    setSelectedInvoicesOrders(newselectedInvoiceOrders);
+    handleCheckboxSelectAll(checked);
   };
 
   const handleSubmitInvoices = () => {
-    const orders = Object.keys(selectedInvoicesOrders)
-      .filter(x => selectedInvoicesOrders[x] === true)
-      .map(x => parseInt(x));
-    submitInvoicesByOrders(orders);
-    selectAllCheckboxes(false);
+    submitInvoicesByOrders();
     toast.info("Invoice(s) have been submitted!");
   };
 
-  const getNumberOfInvoicesSelected = () => {
-    //TODO: Once a invoice is submitted. It still thinks it is selected.
-    return Object.values(selectedInvoicesOrders).filter(x => x === true).length;
-  };
-
+  useEffect(() => {
+    async function fetchData() {
+      const result = await fetch("/getInvoices");
+      const body = await result.json();
+      getInvoices(body.invoices);
+    }
+    fetchData();
+  }, [getInvoices]);
   return (
     <Wrapper>
       <Paper>
         <Toolbar>
           <ToolBarWrapper>
-            <div>{getNumberOfInvoicesSelected()} Orders Selected</div>{" "}
+            <div>{totalInvoicesSelected} Orders Selected</div>{" "}
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
               <Button variant="outlined" color="primary" onClick={handleSubmitInvoices}>
                 Submit Invoices
@@ -127,8 +117,9 @@ function InvoiceGrid({ invoices, submitInvoicesByOrders, getInvoices }) {
                   <TableCell component="th" scope="row">
                     <Checkbox
                       name={inv.order}
-                      checked={selectedInvoicesOrders[inv.order]}
-                      onChange={e => handleCheckboxChange(e)}
+                      // checked={selectedInvoicesOrders[inv.order]}
+                      checked={inv.isSelected}
+                      onChange={() => handleCheckboxChange(inv)}
                       color="primary"
                     />
                   </TableCell>
@@ -154,12 +145,15 @@ InvoiceGrid.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  invoices: getFilteredInvoices(state)
+  invoices: getFilteredInvoices(state),
+  totalInvoicesSelected: getNumberOfSelectedInvoices(state)
 });
 
 const mapDispatchToProps = dispatch => ({
   submitInvoicesByOrders: orders => dispatch(submitInvoices(orders)),
-  getInvoices: invoices => dispatch(loadInvoices(invoices))
+  getInvoices: invoices => dispatch(loadInvoices(invoices)),
+  handleCheckboxSelect: invoice => dispatch(selectInvoice(invoice)),
+  handleCheckboxSelectAll: checked => dispatch(selectAllInvoices(checked))
 });
 
 export default connect(

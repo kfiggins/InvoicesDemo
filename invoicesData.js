@@ -444,7 +444,25 @@ const getInvoices = () => {
       order: 1047,
       customerName: "commodo",
       carrierName: "velit",
-      total: 700,
+      total: 750,
+      statusId: 3,
+      statusName: "Billed"
+    },
+    {
+      isSelected: false,
+      order: 1048,
+      customerName: "commodo",
+      carrierName: "velit",
+      total: 70,
+      statusId: 3,
+      statusName: "Billed"
+    },
+    {
+      isSelected: false,
+      order: 1049,
+      customerName: "commodo",
+      carrierName: "velit",
+      total: 706,
       statusId: 3,
       statusName: "Billed"
     }
