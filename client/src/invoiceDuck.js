@@ -4,6 +4,7 @@
 // Action Types
 const FILTER_ON_STATUS = "FILTER_ON_STATUS";
 const SUBMIT_INVOICES = "SUBMIT_INVOICES";
+const LOAD_INVOICES = "LOAD_INVOICES";
 
 // Reducers
 export const invoiceReducer = (state, action) => {
@@ -15,6 +16,10 @@ export const invoiceReducer = (state, action) => {
     case SUBMIT_INVOICES:
       return Object.assign({}, state, {
         invoices: state.invoices.filter(i => !action.payload.includes(i.order))
+      });
+    case LOAD_INVOICES:
+      return Object.assign({}, state, {
+        invoices: action.payload
       });
     default:
       return state;
@@ -28,6 +33,10 @@ export const filterOnStatus = statusId => {
 
 export const submitInvoices = orders => {
   return { type: SUBMIT_INVOICES, payload: orders };
+};
+
+export const loadInvoices = invoices => {
+  return { type: LOAD_INVOICES, payload: invoices };
 };
 
 // Side effects if needed

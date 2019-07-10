@@ -14,7 +14,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { filterOnStatus } from "../invoiceDuck";
 
 const Wrapper = styled.div`
-  padding: 24px;
+  padding: 10px 24px;
   margin-bottom: 0.5rem;
   justify-content: space-between;
   display: flex;

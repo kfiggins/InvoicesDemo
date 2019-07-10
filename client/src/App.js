@@ -32,57 +32,57 @@ const Wrapper = styled.div`
 const MinWidth = styled.div`
   display: flex;
   flex-direction: column;
-  min-width: 80%;
+  min-width: 70%;
 `;
 
 //Initial State
 const initalState = {
   currentStatusFilterId: 0,
   invoices: [
-    {
-      isSelected: false,
-      order: 1234,
-      customerId: 1,
-      customerName: "ACME",
-      carrierId: 1,
-      carrierName: "ACME Carrier",
-      total: 750,
-      statusId: 1,
-      statusName: "New"
-    },
-    {
-      isSelected: true,
-      order: 1235,
-      customerId: 2,
-      customerName: "Oil Co.",
-      carrierId: 2,
-      carrierName: "Oil Carrier",
-      total: 750,
-      statusId: 2,
-      statusName: "Pending"
-    },
-    {
-      isSelected: false,
-      order: 1236,
-      customerId: 3,
-      customerName: "Frak Co.",
-      carrierId: 3,
-      carrierName: "Frak Carrier",
-      total: 750,
-      statusId: 2,
-      statusName: "Pending"
-    },
-    {
-      isSelected: false,
-      order: 1237,
-      customerId: 4,
-      customerName: "Gas Co.",
-      carrierId: 4,
-      carrierName: "Gas Carrier",
-      total: 750,
-      statusId: 3,
-      statusName: "Billed"
-    }
+    // {
+    //   isSelected: false,
+    //   order: 1234,
+    //   customerId: 1,
+    //   customerName: "ACME",
+    //   carrierId: 1,
+    //   carrierName: "ACME Carrier",
+    //   total: 750,
+    //   statusId: 1,
+    //   statusName: "New"
+    // },
+    // {
+    //   isSelected: true,
+    //   order: 1235,
+    //   customerId: 2,
+    //   customerName: "Oil Co.",
+    //   carrierId: 2,
+    //   carrierName: "Oil Carrier",
+    //   total: 750,
+    //   statusId: 2,
+    //   statusName: "Pending"
+    // },
+    // {
+    //   isSelected: false,
+    //   order: 1236,
+    //   customerId: 3,
+    //   customerName: "Frak Co.",
+    //   carrierId: 3,
+    //   carrierName: "Frak Carrier",
+    //   total: 750,
+    //   statusId: 2,
+    //   statusName: "Pending"
+    // },
+    // {
+    //   isSelected: false,
+    //   order: 1237,
+    //   customerId: 4,
+    //   customerName: "Gas Co.",
+    //   carrierId: 4,
+    //   carrierName: "Gas Carrier",
+    //   total: 750,
+    //   statusId: 3,
+    //   statusName: "Billed"
+    // }
   ]
 };
 

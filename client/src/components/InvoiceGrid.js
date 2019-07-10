@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -16,22 +16,13 @@ import Paper from "@material-ui/core/Paper";
 import Checkbox from "@material-ui/core/Checkbox";
 import Toolbar from "@material-ui/core/Toolbar";
 
-import { submitInvoices } from "../invoiceDuck";
+import { submitInvoices, loadInvoices } from "../invoiceDuck";
 import { toast } from "react-toastify";
 import { getFilteredInvoices } from "../selectors/selectors";
 
 const Wrapper = styled.div`
   border: 1px rgba(255, 255, 255, 0.23) solid;
   border-radius: 7px;
-`;
-
-const StatusWrapper = styled.div`
-  border: #2b7ec6 1px solid;
-  border-radius: 15px;
-  padding: 5px 30px;
-  color: #2b7ec6;
-  width: 50px;
-  text-align: center;
 `;
 
 const ToolBarWrapper = styled.div`
@@ -41,16 +32,32 @@ const ToolBarWrapper = styled.div`
   width: 100%;
 `;
 
-function InvoiceGrid({ invoices, submitInvoicesByOrders }) {
+const TableWrapper = styled.div`
+  overflow-y: scroll;
+  height: calc(100vh - 250px);
+`;
+
+function InvoiceGrid({ invoices, submitInvoicesByOrders, getInvoices }) {
   // TODO: Figure out a better way to initiate state
   const invoiceOrders = invoices.map(inv => inv.order);
   let newselectedInvoiceOrders = {};
   invoiceOrders.forEach(o => {
     newselectedInvoiceOrders[o] = false;
   });
+
   const [selectedInvoicesOrders, setSelectedInvoicesOrders] = useState(
     newselectedInvoiceOrders
   );
+
+  useEffect(() => {
+    async function fetchData() {
+      const result = await fetch("/getInvoices");
+      const body = await result.json();
+      getInvoices(body.invoices);
+    }
+    fetchData();
+  }, [getInvoices]);
+
   const handleCheckboxChange = e => {
     setSelectedInvoicesOrders({
       ...selectedInvoicesOrders,
@@ -96,45 +103,47 @@ function InvoiceGrid({ invoices, submitInvoicesByOrders }) {
             </div>
           </ToolBarWrapper>
         </Toolbar>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <Checkbox
-                  onChange={e => selectAllCheckboxes(e.target.checked)}
-                  color="primary"
-                />{" "}
-                SELECT ALL
-              </TableCell>
-              <TableCell>ORDER</TableCell>
-              <TableCell>CUSTOMER</TableCell>
-              <TableCell>CARRIER</TableCell>
-              <TableCell>TOTAL</TableCell>
-              <TableCell>STATUS</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {invoices.map(inv => (
-              <TableRow key={inv.order}>
-                <TableCell component="th" scope="row">
-                  <Checkbox
-                    name={inv.order}
-                    checked={selectedInvoicesOrders[inv.order]}
-                    onChange={e => handleCheckboxChange(e)}
-                    color="primary"
-                  />
-                </TableCell>
-                <TableCell>#{inv.order}</TableCell>
-                <TableCell>{inv.customerName}</TableCell>
-                <TableCell>{inv.carrierName}</TableCell>
-                <TableCell>{inv.total}</TableCell>
+        <TableWrapper>
+          <Table>
+            <TableHead>
+              <TableRow>
                 <TableCell>
-                  <Status invoice={inv} />
+                  <Checkbox
+                    onChange={e => selectAllCheckboxes(e.target.checked)}
+                    color="primary"
+                  />{" "}
+                  SELECT ALL
                 </TableCell>
+                <TableCell>ORDER</TableCell>
+                <TableCell>CUSTOMER</TableCell>
+                <TableCell>CARRIER</TableCell>
+                <TableCell>TOTAL</TableCell>
+                <TableCell>STATUS</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHead>
+            <TableBody>
+              {invoices.map(inv => (
+                <TableRow key={inv.order}>
+                  <TableCell component="th" scope="row">
+                    <Checkbox
+                      name={inv.order}
+                      checked={selectedInvoicesOrders[inv.order]}
+                      onChange={e => handleCheckboxChange(e)}
+                      color="primary"
+                    />
+                  </TableCell>
+                  <TableCell>#{inv.order}</TableCell>
+                  <TableCell>{inv.customerName}</TableCell>
+                  <TableCell>{inv.carrierName}</TableCell>
+                  <TableCell>{inv.total}</TableCell>
+                  <TableCell>
+                    <Status invoice={inv} />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableWrapper>
       </Paper>
     </Wrapper>
   );
@@ -149,7 +158,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  submitInvoicesByOrders: orders => dispatch(submitInvoices(orders))
+  submitInvoicesByOrders: orders => dispatch(submitInvoices(orders)),
+  getInvoices: invoices => dispatch(loadInvoices(invoices))
 });
 
 export default connect(
